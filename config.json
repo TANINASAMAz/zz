@@ -1,0 +1,7 @@
+{
+  "token_bot": "TOKEN",
+
+  "WEBHOOK_URL": "WEBHOOK_URL",
+ 
+  "Admin_command": ["Admin_command"]
+}
