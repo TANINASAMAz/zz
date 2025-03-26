@@ -1,0 +1,84 @@
+const os = require("os");
+
+const digitMap = {
+    '0': '０', '1': '１', '2': '２', '3': '３', '4': '４',
+    '5': '５', '6': '６', '7': '７', '8': '８', '9': '９'
+};
+const stylizedDigits = {
+    '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑', '4': '𝟒',
+    '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
+};
+function getCurrentTime() {
+    const currentTime = new Date();
+    const options = { timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", hour12: false };
+    let timeString = currentTime.toLocaleTimeString("th-TH", options);
+    return timeString.replace(/[0-9]/g, digit => digitMap[digit]);
+}
+const monthNames = ["𝟎𝟏", "𝟎𝟐", "𝟎𝟑", "𝟎𝟒", "𝟎𝟓", "𝟎𝟔", "𝟎𝟕", "𝟎𝟖", "𝟎𝟗", "𝟏𝟎", "𝟏𝟏", "𝟏𝟐"];
+function getCurrentDay() {
+    const date = new Date();
+    const options = { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' };
+    const formattedDate = new Intl.DateTimeFormat('th-TH', options).format(date);
+    const [day, month, year] = formattedDate.split('/');
+    const monthIndex = parseInt(month, 10) - 1;
+    return `${stylizedDigits[day[0]]}${stylizedDigits[day[1]]}/${monthNames[monthIndex]}/${stylizedDigits[year[0]]}${stylizedDigits[year[1]]}${stylizedDigits[year[2]]}${stylizedDigits[year[3]]}`;
+}
+const monthNamess = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+function getCurrentDayy() {
+    const date = new Date();
+    const options = { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' };
+    const formattedDate = new Intl.DateTimeFormat('th-TH', options).format(date);
+    const [day, month, year] = formattedDate.split('/');
+    const monthIndex = parseInt(month, 10) - 1;
+    return `${stylizedDigits[day[0]]}${stylizedDigits[day[1]]}/${monthNamess[monthIndex]}/${stylizedDigits[year[0]]}${stylizedDigits[year[1]]}${stylizedDigits[year[2]]}${stylizedDigits[year[3]]}`;
+}
+const monthNamesss = ["𝐉𝐚𝐧𝐮𝐚𝐫𝐲", "𝐅𝐞𝐛𝐫𝐮𝐚𝐫𝐲", "𝐌𝐚𝐫𝐜𝐡", "𝐀𝐩𝐫𝐢𝐥", "𝐌𝐚𝐲", "𝐉𝐮𝐧𝐞", "𝐉𝐮𝐥𝐲", "𝐀𝐮𝐠𝐮𝐬𝐭", "𝐒𝐞𝐩𝐭𝐞𝐦𝐛𝐞𝐫", "𝐎𝐜𝐭𝐨𝐛𝐞𝐫", "𝐍𝐨𝐯𝐞𝐦𝐛𝐞𝐫", "𝐃𝐞𝐜𝐞𝐦𝐛𝐞𝐫"];
+function getCurrentDateEG() {
+    const date = new Date();
+    const options = { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' };
+    const formattedDate = new Intl.DateTimeFormat('th-TH', options).format(date);
+    const [day, month, year] = formattedDate.split('/');
+    const monthIndex = parseInt(month, 10) - 1;
+    return `${stylizedDigits[day[0]]}${stylizedDigits[day[1]]}/${monthNamesss[monthIndex]}/${stylizedDigits[year[0]]}${stylizedDigits[year[1]]}${stylizedDigits[year[2]]}${stylizedDigits[year[3]]}`;
+}
+const dayNamess = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+function getCurrentDayThai() {
+    const date = new Date();
+    const options = { timeZone: 'Asia/Bangkok', weekday: 'long' };
+    const bangkokDay = new Intl.DateTimeFormat('th-TH', options).format(date);
+    const dayIndex = dayNamess.indexOf(bangkokDay);
+    return dayNamess[dayIndex] || bangkokDay;
+}
+const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+function getCurrentDayEG() {
+    const date = new Date();
+    const options = { timeZone: 'Asia/Bangkok', weekday: 'long' };
+    const bangkokDay = new Intl.DateTimeFormat('en-US', options).format(date);
+    const dayIndex = dayNames.indexOf(bangkokDay);
+    return dayNames[dayIndex];
+}
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['', '', '', '', ''];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+function getRAMInfo() {
+    const totalMemory = os.totalmem();
+    return `${formatBytes(totalMemory)}`;
+}
+function getCPUInfo() {
+    const cpus = os.cpus();
+    const cpuModels = new Set(cpus.map(cpu => cpu.model));
+    return Array.from(cpuModels);
+}
+function getTemperature() {
+    const center = 25;
+    const variance = 5;
+    const temperature = center + (Math.random() * variance * 2 - variance);
+    return `${temperature.toFixed(1)}`;
+}
+
+module.exports = { getCurrentTime, getCurrentDay, getCurrentDayy, getCurrentDateEG, getCurrentDayThai, getCurrentDayEG, getRAMInfo, getCPUInfo, getTemperature };
