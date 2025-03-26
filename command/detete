@@ -1,0 +1,46 @@
+const fs = require('fs');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
+
+module.exports = {
+    name: 'interactionCreate',
+    async execute(regularbot, interaction) {
+        try {
+            if (!interaction.isButton()) return;
+
+            if (interaction.customId === "off_medmwng") {
+                await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+                const FOLDER_DELETE = './modal_setting/user.json';
+                const deleteKeyId = interaction.user.id;
+
+                try {
+                    const deletePath = `${FOLDER_DELETE}`;
+                    const userData = JSON.parse(fs.readFileSync(deletePath, 'utf8'));
+
+                    if (userData[deleteKeyId]) {
+                        delete userData[deleteKeyId];
+                        fs.writeFileSync(deletePath, JSON.stringify(userData, null, 4));
+
+                        const embedDelete = new EmbedBuilder()
+                            .setColor(0x6633CC)
+                            .setTitle('``✅`` ปิดสถานะสำเร็จ!');
+                        await interaction.editReply({ embeds: [embedDelete] });
+                    } else {
+                        const embedNotFound = new EmbedBuilder()
+                            .setColor(0xFF0000)
+                            .setTitle('``❌`` เอ้ะ! กรุณาเพิ่มข้อมูลผู้ใช้งานก่อน!');
+                        await interaction.editReply({ embeds: [embedNotFound] });
+                    }
+                } catch (error) {
+                    console.error('Error reading or writing user data:', error);
+                    const embedError = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle('``❌`` เกิดข้อผิดพลาดในการลบข้อมูล!');
+                    await interaction.editReply({ embeds: [embedError] });
+                }
+            }
+        } catch (error) {
+            console.error('Unexpected error Delete:', error);
+        }
+    }
+};
